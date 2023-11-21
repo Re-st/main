@@ -129,12 +129,12 @@ def cluster(df, year, n_clst, method, cluster_by, outdir, font_name, folder_name
                 "maxAge": age + 1,
                 "count": count,
                 "ageGroup": age_group,
-                "color": colors[age_group]
+                "color": colors[age_group],
             }
             for age, count, age_group in zip(
-                range(df_clst['age'].min(), df_clst['age'].max() + 1),
-                df_clst.groupby('age').size(),
-                df_clst.groupby('age')['cluster_label'].first()
+                range(df_clst["age"].min(), df_clst["age"].max() + 1),
+                df_clst.groupby("age").size(),
+                df_clst.groupby("age")["cluster_label"].first(),
             )
         ]
 
