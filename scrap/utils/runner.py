@@ -12,11 +12,7 @@ from abc import *
 
 from configurations.secrets import WebhookSecrets
 
-from scrap.utils.data_io import (
-    export_results_to_json,
-    export_results_to_txt,
-    import_results_from_json,
-)
+from scrap.utils.export import export_results_to_json, export_results_to_txt
 from scrap.utils.database import save_to_database
 from scrap.utils.types import ScrapResult, ScrapBasicArgument
 from scrap.utils.spreadsheet import read_record_from_spreadsheet
@@ -38,6 +34,7 @@ from scrap.metropolitan_council import *
 from scrap.national_council import *
 from requests import post
 from scrap.group_head import *
+from requests import post
 from requests.exceptions import Timeout
 
 
@@ -162,8 +159,7 @@ class LocalCouncilScraper(BaseScraper):
 
         result_summary = f"| 총 실행 횟수: {len(cids)} | 에러: {list(self.error_log.keys())}, 총 {len(self.error_log)}회 | 그 중 정보 없음 횟수: {self.parseerror_count} | 타임아웃 횟수: {self.timeout_count} |"
         logging.info(result_summary)
-        if enable_webhook:
-            self.send_webhook("지방의회 스크랩 결과\n" + result_summary)
+        self.send_webhook("지방의회 스크랩 결과\n" + result_summary)
 
         return scrape_results
 
@@ -195,8 +191,7 @@ class MetroCouncilScraper(BaseScraper):
 
         result_summary = f"| 총 실행 횟수: {len(cids)} | 에러: {list(self.error_log.keys())}, 총 {len(self.error_log)}회 | 그 중 정보 없음 횟수: {self.parseerror_count} | 타임아웃 횟수: {self.timeout_count} |"
         logging.info(result_summary)
-        if enable_webhook:
-            self.send_webhook("광역의회 스크랩 결과\n" + result_summary)
+        self.send_webhook("광역의회 스크랩 결과\n" + result_summary)
 
         return scrape_results
 

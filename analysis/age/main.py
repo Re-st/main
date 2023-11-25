@@ -113,7 +113,9 @@ def run_by_mongo(cluster_by, is_elected, councilorType, N=5):
 
 
 def main(N=5):
-    # 세종시의 경우 어느 순간 승급하기 때문에 sdName을 먼저 해야, sdName이 cluster 시작 때 밀려도 괜챃다. (cluster 함수 참조)
+    # 세종시의 경우 local(연기군)이었다가 어느 순간 metro로 승급하기 때문에
+    # run_by_mongo(sdName, ..)을 먼저 해야 된다. 만약 wiwName을 먼저 한다면
+    # 이후 sdName을 할 때, 쌓아놓은 세종시 데이터가 깔끔하게 밀리고 시작하기 때문
     run_by_mongo("sdName", is_elected=True, councilorType="metro_councilor")
     run_by_mongo("sdName", is_elected=False, councilorType="metro_councilor")
     run_by_mongo("sdName", is_elected=True, councilorType="local_councilor")
