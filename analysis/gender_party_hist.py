@@ -21,20 +21,17 @@ BASE_DIR = os.path.join(os.path.dirname(__file__), os.pardir)
 
 
 def gender_hist(
-    councilor_type: str, level: int, is_elected: bool, filenames: list[str]
+    level: int, is_elected: bool
 ):
-    ## TO-DO: excel말고 mongodb에서 받아오도록 합니다.
-    assert (councilor_type, level) in [
-        ("local_councilor", 2),
-        ("metro_councilor", 1),
-        ("national_councilor", 0),
-    ]
-    datadir = os.path.join(BASE_DIR, "_data")
-    df = pd.DataFrame()
-
-    for d in filenames:
-        df_new = pd.read_excel(os.path.join(datadir, d))
-        df = pd.concat([df, df_new])
+    # Get collection from MongoDB
+    name_list = ['national_councilor', 'metropolitan_councilor', 'local_councilor']
+    collection_name = name_list[level]
+    if not is_elected:
+        collection_name += "_candidate"
+    collection = client["council"].get_collection(collection_name)
+    # Make it to pandas dataframe
+    cursor = collection.find({})
+    df = pd.DataFrame(list(cursor))
 
     district_db = client["district"]
     gender_hist_collection = client["stats"].get_collection("gender_hist")
@@ -131,18 +128,15 @@ def gender_hist_add_zero():
 
 
 def party_hist(councilor_type: str, level: int, is_elected: bool, filenames: list[str]):
-    ## TO-DO: excel말고 mongodb에서 받아오도록 합니다.
-    assert (councilor_type, level) in [
-        ("local_councilor", 2),
-        ("metro_councilor", 1),
-        ("national_councilor", 0),
-    ]
-    datadir = os.path.join(BASE_DIR, "_data")
-    df = pd.DataFrame()
-
-    for d in filenames:
-        df_new = pd.read_excel(os.path.join(datadir, d))
-        df = pd.concat([df, df_new])
+    # Get collection from MongoDB
+    name_list = ['national_councilor', 'metropolitan_councilor', 'local_councilor']
+    collection_name = name_list[level]
+    if not is_elected:
+        collection_name += "_candidate"
+    collection = client["council"].get_collection(collection_name)
+    # Make it to pandas dataframe
+    cursor = collection.find({})
+    df = pd.DataFrame(list(cursor))
 
     district_db = client["district"]
     party_hist_collection = client["stats"].get_collection("party_hist")
@@ -232,21 +226,24 @@ def party_hist(councilor_type: str, level: int, is_elected: bool, filenames: lis
 # ===================================================
 
 
-def age_hist_national(is_elected: bool, filenames: list[str]):
+def age_hist_national(is_elected: bool):
+    # Get collection from MongoDB
+    if is_elected:
+        collection_name = "national_councilor"
+    if not is_elected:
+        collection_name += "national_councilor_candidate"
+    collection = client["council"].get_collection(collection_name)
+    # Make it to pandas dataframe
+    cursor = collection.find({})
+    df_original = pd.DataFrame(list(cursor))
+    df_original["year"] = df_original["sgId"] // 10000
+
     age_hist_collection = client["stats"].get_collection("age_hist")
     age_stat_collection = client["stats"].get_collection("age_stat")
     # paramter
     method = "equal"
     n_clst = 5
 
-    datadir = os.path.join(BASE_DIR, "_data")
-    df_original = pd.DataFrame()
-
-    for d in filenames:
-        df_new = pd.read_excel(os.path.join(datadir, d))
-        df_original = pd.concat([df_original, df_new])
-    # df_original = df_original[["sgId", "name", "age"]].groupby(by=["sgId", "age"]).count().reset_index()
-    df_original["year"] = df_original["sgId"] // 10000
     df_original = df_original[df_original["year"].isin([2008, 2012, 2016, 2020, 2024])]
     years = df_original["year"].unique()
     for year in years:
@@ -302,36 +299,27 @@ def age_hist_national(is_elected: bool, filenames: list[str]):
 
 
 def main():
-    gender_hist(
-        "local_councilor", 2, True, ["[당선][구시군의회의원].xlsx", "[당선][기초의원비례대표].xlsx"]
-    )
-    gender_hist(
-        "local_councilor", 2, False, ["[후보][구시군의회의원].xlsx", "[후보][기초의원비례대표].xlsx"]
-    )
-
-    gender_hist("metro_councilor", 1, True, ["[당선][시도의원].xlsx", "[당선][광역의원비례대표].xlsx"])
-    gender_hist("metro_councilor", 1, False, ["[후보][시도의원].xlsx", "[후보][광역의원비례대표].xlsx"])
-
-    gender_hist("national_councilor", 0, True, ["[당선][국회의원].xlsx"])
-    gender_hist("national_councilor", 0, False, ["[후보][국회의원].xlsx"])
+    '''
+    param level:
+        National_councilor = 0
+        Metro_councilor = 1
+        Local_councilor = 2
+    param elected(bool):
+        당선 = True
+        후보 = False
+    '''
+    for level in [2, 1, 0]:
+        for elected in [True, False]:
+            gender_hist(level, elected)
 
     gender_hist_add_zero()
 
-    party_hist(
-        "local_councilor", 2, True, ["[당선][구시군의회의원].xlsx", "[당선][기초의원비례대표].xlsx"]
-    )
-    party_hist(
-        "local_councilor", 2, False, ["[후보][구시군의회의원].xlsx", "[후보][기초의원비례대표].xlsx"]
-    )
+    for level in [2, 1, 0]:
+        for elected in [True, False]:
+            party_hist(level, elected)
 
-    party_hist("metro_councilor", 1, True, ["[당선][시도의원].xlsx", "[당선][광역의원비례대표].xlsx"])
-    party_hist("metro_councilor", 1, False, ["[후보][시도의원].xlsx", "[후보][광역의원비례대표].xlsx"])
-
-    party_hist("national_councilor", 0, True, ["[당선][국회의원].xlsx"])
-    party_hist("national_councilor", 0, False, ["[후보][국회의원].xlsx"])
-
-    age_hist_national(True, ["[당선][국회의원].xlsx"])
-    age_hist_national(False, ["[후보][국회의원].xlsx"])
+    for elected in [True, False]:
+        age_hist_national(elected)
 
 
 if __name__ == "__main__":
