@@ -319,6 +319,8 @@ def cluster(df_original, n_clst, basedic, clean_flag=True):
             else:
                 localname = df_clst["wiwName"].iloc[0]
                 print("sdName is ", metroname, "wiwName is", localname)
+                if metroname == "경상북도" and localname == "군위군":
+                    metroname = "대구광역시"
                 localId = localIds.find_one(
                     {"sdName": metroname, "wiwName": localname}
                 )["localId"]

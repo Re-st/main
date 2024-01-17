@@ -58,16 +58,6 @@ def run_by_excel(cluster_by, filenames, N=5, folder_name="To_be_filled"):
         )
         cluster(df, N, basedic)
 
-
-# def main(N=5):
-#     run_by_excel("sdName", ["[당선][시도의원].xlsx", "[당선][광역의원비례대표].xlsx"])
-#     run_by_excel("sdName", ["[후보][시도의원].xlsx", "[후보][광역의원비례대표].xlsx"])
-#     run_by_excel("sdName", ["[당선][구시군의회의원].xlsx", "[당선][기초의원비례대표].xlsx"])
-#     run_by_excel("sdName", ["[후보][구시군의회의원].xlsx", "[후보][기초의원비례대표].xlsx"])
-#     run_by_excel("wiwName", ["[당선][구시군의회의원].xlsx", "[당선][기초의원비례대표].xlsx"])
-#     run_by_excel("wiwName", ["[후보][구시군의회의원].xlsx", "[후보][기초의원비례대표].xlsx"])
-
-
 def run_by_mongo(cluster_by, is_elected, councilorType, N=5):
     assert cluster_by in ["sdName", "wiwName"]
     level = 1 if cluster_by == "sdName" else 2
@@ -114,12 +104,18 @@ def run_by_mongo(cluster_by, is_elected, councilorType, N=5):
 
 def main(N=5):
     # 세종시의 경우 어느 순간 승급하기 때문에 sdName을 먼저 해야, sdName이 cluster 시작 때 밀려도 괜챃다. (cluster 함수 참조)
+
+    # run_by_excel("sdName", ["[당선][시도의원].xlsx", "[당선][광역의원비례대표].xlsx"])
+    # run_by_excel("sdName", ["[후보][시도의원].xlsx", "[후보][광역의원비례대표].xlsx"])
+    # run_by_excel("sdName", ["[당선][구시군의회의원].xlsx", "[당선][기초의원비례대표].xlsx"])
+    # run_by_excel("sdName", ["[후보][구시군의회의원].xlsx", "[후보][기초의원비례대표].xlsx"])
+    # run_by_excel("wiwName", ["[당선][구시군의회의원].xlsx", "[당선][기초의원비례대표].xlsx"])
+    # run_by_excel("wiwName", ["[후보][구시군의회의원].xlsx", "[후보][기초의원비례대표].xlsx"])
     run_by_mongo("sdName", is_elected=True, councilorType="metro_councilor")
     run_by_mongo("sdName", is_elected=False, councilorType="metro_councilor")
     run_by_mongo("sdName", is_elected=True, councilorType="local_councilor")
     run_by_mongo("sdName", is_elected=False, councilorType="local_councilor")
     run_by_mongo("wiwName", is_elected=True, councilorType="local_councilor")
     run_by_mongo("wiwName", is_elected=False, councilorType="local_councilor")
-
 
 main()
