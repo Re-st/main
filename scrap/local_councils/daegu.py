@@ -1,3 +1,5 @@
+from bs4 import BeautifulSoup
+from scrap.utils.requests import get_selenium
 from scrap.local_councils import *
 
 
@@ -99,7 +101,9 @@ def scrap_45(url, cid, args: ArgsType = None) -> ScrapResult:
 
 def scrap_46(url, cid, args: ArgsType = None) -> ScrapResult:
     """대구 북구"""
-    soup = get_soup(url, verify=False)
+    browser = get_selenium(url)
+    html = browser.page_source
+    soup = BeautifulSoup(html, "html.parser")
     councilors: list[Councilor] = []
 
     for profile in soup.find_all("div", class_="profile"):

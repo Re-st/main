@@ -101,6 +101,9 @@ def getname(profile, element, class_, wrapper_element, wrapper_class_):
             if keyword in name:  # 인천 서구 등
                 name = name.replace(keyword, "").strip()
                 break
+    # For debugging
+    if name == "":
+        return "이름이 비어 있음"
     maybe_name = name.split()[0]  # 이름 뒤에 직책이 따라오는 경우
     if len(maybe_name) == 1:  # 외자 이름이 띄어쓰기 때문에 분리된 경우
         name = "".join(name.split()[0:2])
@@ -136,6 +139,9 @@ def sel_getname(profile, element, class_, wrapper_element, wrapper_class_):
                 name = name.replace(keyword, "").strip()
                 break
     # print(name, "is name\n")
+    # For debugging
+    if name == "":
+        return "이름이 비어 있음"
     maybe_name = name.split()[0]  # 이름 뒤에 직책이 따라오는 경우
     if len(maybe_name) == 1:  # 외자 이름이 띄어쓰기 때문에 분리된 경우
         name = "".join(name.split()[0:2])

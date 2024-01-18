@@ -150,9 +150,7 @@
         "pf_cls": "profile",
         "name_elt": "div",
         "name_cls": "name",
-        "pty_elt": "li",
-        "pty_wrapelt": "a",
-        "pty_wrapcls": "end"
+        "pty_elt": "li"
     },
     "79": {
         "pf_elt": "div",

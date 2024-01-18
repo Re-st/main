@@ -2,7 +2,8 @@
 서울특별시 기초의회를 스크랩합니다. (1~25)
 """
 from urllib.parse import urlparse
-
+from bs4 import BeautifulSoup
+from scrap.utils.requests import get_selenium
 from scrap.local_councils import *
 
 
@@ -444,7 +445,9 @@ def scrap_19(url, cid, args: ArgsType = None) -> ScrapResult:
 
 def scrap_20(url, cid, args: ArgsType = None) -> ScrapResult:
     """서울 동작구"""
-    soup = get_soup(url, verify=False)
+    browser = get_selenium(url)
+    html = browser.page_source
+    soup = BeautifulSoup(html, "html.parser")
     councilors: list[Councilor] = []
 
     for profile in soup.find_all("div", class_="profile"):
