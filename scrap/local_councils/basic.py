@@ -1,6 +1,7 @@
 from scrap.utils.requests import get_selenium, By
 from selenium.common.exceptions import NoSuchElementException
 from scrap.local_councils import *
+from bs4 import BeautifulSoup
 import re
 import requests
 import copy
@@ -45,7 +46,7 @@ def getprofiles(soup, element, class_, memberlistelement, memberlistclass_):
         try:
             soup = findall(soup, memberlistelement, class_=memberlistclass_)[0]
         except Exception:
-            raise RuntimeError("[basic.py] 의원 목록 사이트에서 의원 프로필을 가져오는데 실패했습니다.")
+            raise RuntimeError("[basic.py] 스프레드시트에 써놓은 주소가 바뀐 게 아닐까요? 의원 목록 사이트에서 의원 프로필을 가져오는데 실패했습니다.")
     return findall(soup, element, class_)
 
 
@@ -55,7 +56,7 @@ def sel_getprofiles(driver, element, class_, memberlistelement, memberlistclass_
         try:
             member_list = sel_findall(driver, memberlistelement, memberlistclass_)[0]
         except Exception:
-            raise RuntimeError("[basic.py] 의원 목록 사이트에서 의원 프로필을 가져오는데 실패했습니다.")
+            raise RuntimeError("[basic.py] 스프레드시트에 써놓은 주소가 바뀐 게 아닐까요? 의원 목록 사이트에서 의원 프로필을 가져오는데 실패했습니다.")
     else:
         member_list = driver
 
@@ -272,7 +273,10 @@ def scrap_basic(
     :param encoding: 받아온 soup 인코딩
     :return: 의원들의 이름과 정당 데이터를 담은 ScrapResult 객체
     """
-    soup = get_soup(url, verify=False, encoding=encoding)
+    browser = get_selenium(url)
+    html = browser.page_source
+    soup = BeautifulSoup(html, "html.parser")
+    # soup = get_soup(url, verify=False, encoding=encoding)
     councilors: list[Councilor] = []
 
     profiles = getprofiles(

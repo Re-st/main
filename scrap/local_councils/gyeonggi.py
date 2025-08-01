@@ -154,34 +154,21 @@ def scrap_88(url, cid, args: ScrapBasicArgument) -> ScrapResult:
 
     return ret_local_councilors(cid, councilors)
 
-def scrap_97(url, cid, args: ArgsType) -> ScrapResult:
+def scrap_97(url, cid, args=None) -> ScrapResult:
     """경기도 이천시"""
     browser = get_selenium(url)
     html = browser.page_source
     soup = BeautifulSoup(html, "html.parser")
     councilors: list[Councilor] = []
 
-    profiles = getprofiles(
-        soup, args.pf_elt, args.pf_cls, args.pf_memlistelt, args.pf_memlistcls
-    )
-    # print(cid, "번째 의회에는,", len(profiles), "명의 의원이 있습니다.")  # 디버깅용.
+    profiles = soup.find("ul", "memberList").find_all("li")
+    parsed_url = urlparse(url)
+    base_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
 
     for profile in profiles:
-        name = party = ""
-        try:
-            name = getname(
-                profile,
-                args.name_elt,
-                args.name_cls,
-                args.name_wrapelt,
-                args.name_wrapcls,
-            )
-        except Exception as e:
-            raise RuntimeError("[basic.py] 의원 이름을 가져오는데 실패했습니다. 이유 : " + str(e))
-        try:
-            party = extract_party(profile.text)
-        except Exception as e:
-            raise RuntimeError("[basic.py] 의원 정당을 가져오는데 실패했습니다. 이유: " + str(e))
+        name = profile.text.split(" ")[0]
+        browser = get_selenium(base_url + profile.find("a")["href"])
+        party = extract_party(BeautifulSoup(browser.page_source, "html.parser").text)
         councilors.append(Councilor(name=name, jdName=party))
 
     return ret_local_councilors(cid, councilors)

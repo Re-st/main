@@ -123,16 +123,19 @@ class LocalCouncilScraper(BaseScraper):
         return n in self.runner_args["no_party"]
     
     def error_unresolved(self, n: int) -> bool:
-        return n in self.runner_args["error_unresolved"]
+        return str(n) in self.runner_args["error_unresolved"]
 
     def run_single(self, cid: int) -> ScrapResult:
         encoding = "euc-kr" if self.is_euc_kr(cid) else "utf-8"
         inner_euckr = self.inner_euckr(cid)
         council_url = self.url_records[cid - 1]["URL"]
         council_args = self.council_args.get(str(cid), None)
+        # 1. 스크랩 선처리 (인자 가져오기, 오류 게시)
         if council_args is not None:
             council_args = ScrapBasicArgument(**council_args)
-
+        if self.error_unresolved(cid):
+            logging.info(f"[기초의회 {cid}] 지난번 확인 시의 오류 : {self.runner_args['error_unresolved'].get(str(cid))}")
+        # 2. 어떤 방식으로 스크랩할지 결정
         if self.is_special_function(cid):
             function_name = f"scrap_{cid}"
             if hasattr(sys.modules[__name__], function_name):
@@ -140,8 +143,6 @@ class LocalCouncilScraper(BaseScraper):
                 result = function_to_call(council_url, cid, args=council_args)
             else:
                 raise NotImplementedError(f"[기초의회 {cid}] {function_name}이 정의되어 있어야 하는데 찾을 수 없습니다.")
-        elif self.error_unresolved(cid):
-            raise ValueError(f"[기초의회 {cid}] 지난번 확인 시, 스크랩이 불가했습니다. (error_unresolved)")
         elif council_args is None:
             raise ValueError(f"[기초의회 {cid}] scrap_args.json에 ScrapBasicArgument가 없습니다. 채워넣어 주세요.")
         elif self.is_selenium_basic(cid):

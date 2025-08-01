@@ -292,14 +292,6 @@
         "name_cls": "name",
         "pty_elt": "em"
     },
-    "97": {
-        "pf_elt": "li",
-        "pf_memlistelt": "class",
-        "pf_memlistcls": "nameMember",
-        "name_elt": "strong",
-        "pty_elt": "tr",
-        "pty_wrapelt": "a"
-    },
     "98": {
         "pf_elt": "div",
         "pf_cls": "profile",
@@ -434,7 +426,7 @@
     "130": {
         "pf_elt": "div",
         "pf_cls": "parliament_text",
-        "name_elt": "h3",
+        "name_elt": "div",
         "name_cls": "h0",
         "pty_elt": "span"
     },
