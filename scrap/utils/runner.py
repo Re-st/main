@@ -25,6 +25,7 @@ from scrap.local_councils.busan import *
 from scrap.local_councils.daegu import *
 from scrap.local_councils.incheon import *
 from scrap.local_councils.gwangju import *
+
 # from scrap.local_councils.daejeon import *
 from scrap.local_councils.ulsan import *
 from scrap.local_councils.gyeonggi import *
@@ -118,10 +119,10 @@ class LocalCouncilScraper(BaseScraper):
 
     def is_selenium_basic(self, n: int) -> bool:
         return n in self.runner_args["selenium_basic"]
-    
+
     def no_party(self, n: int) -> bool:
         return n in self.runner_args["no_party"]
-    
+
     def error_unresolved(self, n: int) -> bool:
         return str(n) in self.runner_args["error_unresolved"]
 
@@ -134,7 +135,9 @@ class LocalCouncilScraper(BaseScraper):
         if council_args is not None:
             council_args = ScrapBasicArgument(**council_args)
         if self.error_unresolved(cid):
-            logging.info(f"[기초의회 {cid}] 지난번 확인 시의 오류 : {self.runner_args['error_unresolved'].get(str(cid))}")
+            logging.info(
+                f"[기초의회 {cid}] 지난번 확인 시의 오류 : {self.runner_args['error_unresolved'].get(str(cid))}"
+            )
         # 2. 어떤 방식으로 스크랩할지 결정
         if self.is_special_function(cid):
             function_name = f"scrap_{cid}"
@@ -142,15 +145,17 @@ class LocalCouncilScraper(BaseScraper):
                 function_to_call = getattr(sys.modules[__name__], function_name)  # type: ignore
                 result = function_to_call(council_url, cid, args=council_args)
             else:
-                raise NotImplementedError(f"[기초의회 {cid}] {function_name}이 정의되어 있어야 하는데 찾을 수 없습니다.")
+                raise NotImplementedError(
+                    f"[기초의회 {cid}] {function_name}이 정의되어 있어야 하는데 찾을 수 없습니다."
+                )
         elif council_args is None:
-            raise ValueError(f"[기초의회 {cid}] scrap_args.json에 ScrapBasicArgument가 없습니다. 채워넣어 주세요.")
+            raise ValueError(
+                f"[기초의회 {cid}] scrap_args.json에 ScrapBasicArgument가 없습니다. 채워넣어 주세요."
+            )
         elif self.is_selenium_basic(cid):
             result = sel_scrap_basic(council_url, cid, council_args)
         else:
-            result = scrap_basic(
-                council_url, cid, council_args, encoding, inner_euckr
-            )
+            result = scrap_basic(council_url, cid, council_args, encoding, inner_euckr)
         if self.no_party(cid):
             logging.info(f"[기초의회 {cid}] 지난번 확인 시, 정당 정보가 홈페이지에 없었습니다. (no_party)")
         return result
@@ -162,7 +167,10 @@ class LocalCouncilScraper(BaseScraper):
             try:
                 result = self.run_single(cid)
                 if "정보 없음" in str(result.councilors):
-                    raise ValueError(f"[기초의회 {cid}] 정보 없음이 포함되어 있습니다. 전체 결과: " + str(result.councilors))
+                    raise ValueError(
+                        f"[기초의회 {cid}] 정보 없음이 포함되어 있습니다. 전체 결과: "
+                        + str(result.councilors)
+                    )
                 scrape_results[cid] = result
             except Exception as e:
                 self.handle_errors(cid, e)
@@ -185,7 +193,9 @@ class MetroCouncilScraper(BaseScraper):
             function_to_call = getattr(sys.modules[__name__], function_name)
             result = function_to_call(cid)
         else:
-            raise NotImplementedError(f"[광역의회 {cid}] {function_name}이 정의되어 있어야 하는데 찾을 수 없습니다.")
+            raise NotImplementedError(
+                f"[광역의회 {cid}] {function_name}이 정의되어 있어야 하는데 찾을 수 없습니다."
+            )
         return result
 
     def run(self, cids: Iterable[int], enable_webhook: bool) -> Dict[int, ScrapResult]:
@@ -195,7 +205,10 @@ class MetroCouncilScraper(BaseScraper):
             try:
                 result = self.run_single(cid)
                 if "정보 없음" in str(result.councilors):
-                    raise ValueError(f"[광역의회 {cid}] 정보 없음이 포함되어 있습니다. 전체 결과: " + str(result.councilors))
+                    raise ValueError(
+                        f"[광역의회 {cid}] 정보 없음이 포함되어 있습니다. 전체 결과: "
+                        + str(result.councilors)
+                    )
                 scrape_results[cid] = result
             except Exception as e:
                 self.handle_errors(cid, e)

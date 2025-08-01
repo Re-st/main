@@ -58,6 +58,7 @@ def run_by_excel(cluster_by, filenames, N=5, folder_name="To_be_filled"):
         )
         cluster(df, N, basedic)
 
+
 def run_by_mongo(cluster_by, is_elected, councilorType, N=5):
     assert cluster_by in ["sdName", "wiwName"]
     level = 1 if cluster_by == "sdName" else 2
@@ -117,5 +118,6 @@ def main(N=5):
     run_by_mongo("sdName", is_elected=False, councilorType="local_councilor")
     run_by_mongo("wiwName", is_elected=True, councilorType="local_councilor")
     run_by_mongo("wiwName", is_elected=False, councilorType="local_councilor")
+
 
 main()

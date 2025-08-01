@@ -6,9 +6,11 @@ runner.py에서 오류가 나는 이유를 찾기 위해
 import sys
 import json
 from scrap.utils.runner import *
+
 # from scrap.utils.email_result import email_result
 PWD = os.path.dirname(__file__)
 JSON_PATH = os.path.join(PWD, os.pardir(), "scrap_args.json")
+
 
 def scrap_all_metro_councils() -> None:
     data = read_record_from_spreadsheet()

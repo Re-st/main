@@ -54,6 +54,7 @@ def scrap_76(url, cid, args: ArgsType) -> ScrapResult:
 
     return ret_local_councilors(cid, councilors)
 
+
 def scrap_78(url, cid, args: ArgsType) -> ScrapResult:
     """경기도 안양시"""
     browser = get_selenium(url)
@@ -153,6 +154,7 @@ def scrap_88(url, cid, args: ScrapBasicArgument) -> ScrapResult:
         councilors.append(Councilor(name=name, jdName=party))
 
     return ret_local_councilors(cid, councilors)
+
 
 def scrap_97(url, cid, args=None) -> ScrapResult:
     """경기도 이천시"""

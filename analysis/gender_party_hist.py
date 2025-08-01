@@ -6,7 +6,7 @@ from db.client import client
 from analysis.age.hist_groups import (
     local_to_metro_list,
     change_local_name,
-    cluster_data
+    cluster_data,
 )
 
 # 경고 무시
@@ -20,11 +20,9 @@ BASE_DIR = os.path.join(os.path.dirname(__file__), os.pardir)
 # ===================================
 
 
-def gender_hist(
-    level: int, is_elected: bool
-):
+def gender_hist(level: int, is_elected: bool):
     # Get collection from MongoDB
-    name_list = ['national_councilor', 'metropolitan_councilor', 'local_councilor']
+    name_list = ["national_councilor", "metropolitan_councilor", "local_councilor"]
     collection_name = name_list[level]
     if not is_elected:
         collection_name += "_candidate"
@@ -129,7 +127,7 @@ def gender_hist_add_zero():
 
 def party_hist(councilor_type: str, level: int, is_elected: bool, filenames: list[str]):
     # Get collection from MongoDB
-    name_list = ['national_councilor', 'metropolitan_councilor', 'local_councilor']
+    name_list = ["national_councilor", "metropolitan_councilor", "local_councilor"]
     collection_name = name_list[level]
     if not is_elected:
         collection_name += "_candidate"
@@ -258,9 +256,7 @@ def age_hist_national(is_elected: bool):
                 "minAge": int(age),
                 "maxAge": int(age) + 1,
                 "count": df[df["age"] == age].shape[0],
-                "ageGroup": int(
-                    df.loc[df["age"] == age].iloc[0]["cluster_label"]
-                ),
+                "ageGroup": int(df.loc[df["age"] == age].iloc[0]["cluster_label"]),
             }
             for age in df["age"].unique()
         ]
@@ -299,7 +295,7 @@ def age_hist_national(is_elected: bool):
 
 
 def main():
-    '''
+    """
     param level:
         National_councilor = 0
         Metro_councilor = 1
@@ -307,7 +303,7 @@ def main():
     param elected(bool):
         당선 = True
         후보 = False
-    '''
+    """
     for level in [2, 1, 0]:
         for elected in [True, False]:
             gender_hist(level, elected)

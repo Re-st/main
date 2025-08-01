@@ -46,7 +46,9 @@ def getprofiles(soup, element, class_, memberlistelement, memberlistclass_):
         try:
             soup = findall(soup, memberlistelement, class_=memberlistclass_)[0]
         except Exception:
-            raise RuntimeError("[basic.py] 스프레드시트에 써놓은 주소가 바뀐 게 아닐까요? 의원 목록 사이트에서 의원 프로필을 가져오는데 실패했습니다.")
+            raise RuntimeError(
+                "[basic.py] 스프레드시트에 써놓은 주소가 바뀐 게 아닐까요? 의원 목록 사이트에서 의원 프로필을 가져오는데 실패했습니다."
+            )
     return findall(soup, element, class_)
 
 
@@ -56,7 +58,9 @@ def sel_getprofiles(driver, element, class_, memberlistelement, memberlistclass_
         try:
             member_list = sel_findall(driver, memberlistelement, memberlistclass_)[0]
         except Exception:
-            raise RuntimeError("[basic.py] 스프레드시트에 써놓은 주소가 바뀐 게 아닐까요? 의원 목록 사이트에서 의원 프로필을 가져오는데 실패했습니다.")
+            raise RuntimeError(
+                "[basic.py] 스프레드시트에 써놓은 주소가 바뀐 게 아닐까요? 의원 목록 사이트에서 의원 프로필을 가져오는데 실패했습니다."
+            )
     else:
         member_list = driver
 
